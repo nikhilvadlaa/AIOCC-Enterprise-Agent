@@ -1,0 +1,30 @@
+{
+  "$id": "https://example.com/schemas/insights.json",
+  "type": "object",
+  "properties": {
+    "sales": {
+      "type": "object",
+      "properties": {
+        "latest_rate": {"type": "number"},
+        "avg_rate": {"type": "number"},
+        "pct_change": {"type": "number"},
+        "z_score": {"type": "number"},
+        "anomaly": {"type": "boolean"}
+      },
+      "required": ["latest_rate","avg_rate"]
+    },
+    "marketing": {"$ref": "#/properties/sales"},
+    "support": {
+      "type":"object",
+      "properties": {
+        "latest_count": {"type":"integer"},
+        "avg_count": {"type":"number"},
+        "pct_change": {"type":"number"},
+        "z_score": {"type":"number"},
+        "anomaly": {"type":"boolean"}
+      }
+    },
+    "summary": {"type": "string"}
+  },
+  "required": ["sales","marketing","support","summary"]
+}

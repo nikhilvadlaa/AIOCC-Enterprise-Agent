@@ -1,0 +1,10 @@
+{
+  "$id": "https://example.com/schemas/reason.json",
+  "type": "object",
+  "properties": {
+    "reason": {"type": "string"},
+    "confidence": {"type": "number"},
+    "detail": {"type": "string"}
+  },
+  "required": ["reason","confidence"]
+}

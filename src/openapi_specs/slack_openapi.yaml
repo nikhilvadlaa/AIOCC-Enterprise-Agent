@@ -1,0 +1,25 @@
+openapi: 3.0.1
+info:
+  title: AIOCC Slack Tool
+  version: "1.0"
+paths:
+  /openapi/slack:
+    post:
+      summary: Post a message to Slack
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: ["channel", "text"]
+              properties:
+                channel:
+                  type: string
+                text:
+                  type: string
+                attachments:
+                  type: object
+      responses:
+        "200":
+          description: success

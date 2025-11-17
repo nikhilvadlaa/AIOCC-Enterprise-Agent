@@ -1,0 +1,25 @@
+openapi: 3.0.1
+info:
+  title: AIOCC Task Tool
+  version: "1.0"
+paths:
+  /openapi/task:
+    post:
+      summary: Create a task (Trello/Jira)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: ["title","body"]
+              properties:
+                title:
+                  type: string
+                body:
+                  type: string
+                assignee:
+                  type: string
+      responses:
+        "200":
+          description: success

@@ -1,0 +1,10 @@
+{
+  "$id": "https://example.com/schemas/action_result.json",
+  "type": "object",
+  "properties": {
+    "action": {"type":"string"},
+    "owner": {"type":"string"},
+    "status": {"type":"string"},
+    "task_id": {"type":"string"}
+  }
+}

@@ -1,0 +1,6 @@
+date,lead_id,source,stage,amount,owner,region
+2025-11-01,LD1001,GoogleAds,MQL,0,Amit,EMEA
+2025-11-02,LD1002,GoogleAds,SQL,5000,Reena,APAC
+2025-11-07,LD1003,Email,SQL,3000,Amit,EMEA
+2025-11-14,LD1010,GoogleAds,MQL,0,Reena,APAC
+2025-11-15,LD1011,GoogleAds,MQL,0,Reena,APAC

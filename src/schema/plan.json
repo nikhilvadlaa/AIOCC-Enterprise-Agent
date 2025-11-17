@@ -1,0 +1,16 @@
+{
+  "$id": "https://example.com/schemas/plan.json",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "reason": {"type": "string"},
+      "action": {"type": "string"},
+      "owner": {"type": "string"},
+      "note": {"type": "string"},
+      "impact": {"type": "string"},
+      "confidence": {"type": "number"}
+    },
+    "required": ["action","owner"]
+  }
+}

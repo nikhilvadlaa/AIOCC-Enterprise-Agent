@@ -1,0 +1,21 @@
+version: "3.8"
+services:
+  agent_tools_api:
+    build:
+      context: ./agent_tools_api
+    env_file: .env
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+  aiocc_runner:
+    build:
+      context: .
+      dockerfile: Dockerfile.aiocc
+    env_file: .env
+    depends_on:
+      - agent_tools_api
+    volumes:
+      - ./:/app
+    command: ["python", "run_long_running.py"]
+    restart: unless-stopped

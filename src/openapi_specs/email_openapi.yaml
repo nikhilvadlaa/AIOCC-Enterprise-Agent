@@ -1,0 +1,27 @@
+openapi: 3.0.1
+info:
+  title: AIOCC Email Tool
+  version: "1.0"
+paths:
+  /openapi/email:
+    post:
+      summary: Send an email
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: ["to","subject","body"]
+              properties:
+                to:
+                  type: string
+                subject:
+                  type: string
+                body:
+                  type: string
+                from_email:
+                  type: string
+      responses:
+        "200":
+          description: success

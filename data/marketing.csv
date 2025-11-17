@@ -1,0 +1,4 @@
+date,campaign,channel,spend,impressions,clicks,conversions,conversion_rate
+2025-11-10,PromoA,GoogleAds,1200,120000,2400,90,0.0375
+2025-11-13,PromoA,GoogleAds,1000,100000,2000,60,0.03
+2025-11-14,PromoA,GoogleAds,1100,100000,1800,30,0.0167

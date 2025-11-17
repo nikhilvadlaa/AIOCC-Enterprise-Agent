@@ -1,0 +1,127 @@
+# src/agents/action_executor_agent.py
+"""
+ActionExecutorAgent — updated to prefer OpenAPI tools
+If OPENAPI_BASE_URL is set and the agent_tools API is reachable, it will use OpenAPI.
+Otherwise falls back to existing local tools (SlackNotifier, TaskManager, EmailSender, PDFReportGenerator).
+"""
+
+import os
+from typing import List, Dict
+
+OPENAPI_BASE = os.getenv("OPENAPI_BASE_URL", os.getenv("AGENT_TOOLS_URL", None))
+
+# Attempt to import OpenAPI wrapper
+try:
+    from src.tools.openapi_tools import OpenAPISlack, OpenAPIEmail, OpenAPITask
+    HAVE_OPENAPI = True
+except Exception:
+    HAVE_OPENAPI = False
+
+class ActionExecutorAgent:
+    def __init__(self, slack_notifier=None, task_manager=None, email_sender=None, pdf_generator=None, memory_bank=None):
+        # keep fallbacks
+        self.slack_local = slack_notifier
+        self.task_local = task_manager
+        self.email_local = email_sender
+        self.pdf = pdf_generator
+        self.memory = memory_bank
+        self.logger = None
+
+        # Initialize OpenAPI clients if available
+        self.open_slack = None
+        self.open_email = None
+        self.open_task = None
+        if HAVE_OPENAPI and OPENAPI_BASE:
+            try:
+                self.open_slack = OpenAPISlack(base_url=OPENAPI_BASE)
+                self.open_email = OpenAPIEmail(base_url=OPENAPI_BASE)
+                self.open_task = OpenAPITask(base_url=OPENAPI_BASE)
+                self._using_openapi = True
+            except Exception:
+                self._using_openapi = False
+        else:
+            self._using_openapi = False
+
+    def attach_logger(self, logger):
+        self.logger = logger
+
+    def _post_slack(self, channel, message, trace_id=None):
+        # prefer openapi
+        if self._using_openapi and self.open_slack:
+            return self.open_slack.post_message(channel=channel, text=message)
+        if self.slack_local:
+            # slack_local.post_message(channel, message) may accept trace_id
+            try:
+                return self.slack_local.post_message(channel, message)
+            except TypeError:
+                return self.slack_local.post_message(channel, message)
+        return {"ok": True, "method": "mock", "message": message}
+
+    def _create_task(self, title, body, assignee=None, trace_id=None):
+        if self._using_openapi and self.open_task:
+            return self.open_task.create_task(title=title, body=body, assignee=assignee)
+        if self.task_local:
+            return self.task_local.create_task(title=title, body=body, assignee=assignee, trace_id=trace_id)
+        return {"ok": True, "method": "mock", "task": {"id":"TASK-MOCK","name":title}}
+
+    def _send_email(self, to, subject, body, from_email="noreply@example.com", trace_id=None):
+        if self._using_openapi and self.open_email:
+            return self.open_email.send_email(to=to, subject=subject, body=body, from_email=from_email)
+        if self.email_local:
+            return self.email_local.send_email(to=to, subject=subject, body=body)
+        return {"ok": True, "method": "mock"}
+
+    def execute_action(self, item: Dict, trace_id=None):
+        action = item['action']
+        owner = item.get('owner', 'unassigned')
+
+        summary = {'action': action, 'owner': owner, 'status': 'pending'}
+
+        if action in ['pause_campaign', 'audit_campaign', 'open_bug', 'create_postmortem']:
+            task = self._create_task(title=f"Action: {action}", body=item.get('note',''), assignee=owner, trace_id=trace_id)
+            # openapi returns different shape; normalize
+            if isinstance(task, dict) and task.get('ok') and task.get('task'):
+                task_obj = task['task']
+            else:
+                task_obj = task.get('card') if isinstance(task, dict) else task
+            self._post_slack(channel=owner or "ops", message=f"[AIOCC] Task created for {action}: {task_obj.get('id') if task_obj else 'UNKNOWN'}", trace_id=trace_id)
+            summary.update({'status':'task_created', 'task': task_obj})
+
+        elif action == 'human_investigate':
+            email_res = self._send_email(to=f"{owner}@example.com", subject="AIOCC Action Required", body=item.get('note',''))
+            self._post_slack(channel="ops", message=f"[AIOCC] Manual triage requested. Email sent to {owner}@example.com", trace_id=trace_id)
+            summary.update({'status':'email_sent', 'email': email_res})
+
+        else:
+            self._post_slack(channel="ops", message=f"[AIOCC] Unknown action: {action}", trace_id=trace_id)
+            summary.update({'status':'unknown_action'})
+
+        mem_event = {"type":"action_executed", "action": item, "summary": summary}
+        if self.memory:
+            self.memory.add_event(mem_event)
+
+        if self.logger:
+            self.logger.log(message=f"Executed action {action}", agent="ActionExecutorAgent", trace_id=trace_id)
+
+        return summary
+
+    def execute(self, plan: List[Dict], trace_id=None):
+        results = []
+        for item in plan:
+            res = self.execute_action(item, trace_id=trace_id)
+            results.append(res)
+
+        # Generate PDF report (best-effort)
+        try:
+            reasons = [p.get('reason') for p in plan]
+            insights = {"summary":"Auto-generated"}
+            if self.pdf:
+                # pass trace_id if supported
+                try:
+                    self.pdf.generate_report(insights=insights, reasons=reasons, plan=plan, result=results, trace_id=trace_id)
+                except TypeError:
+                    self.pdf.generate_report(insights=insights, reasons=reasons, plan=plan, result=results)
+        except Exception:
+            pass
+
+        return results

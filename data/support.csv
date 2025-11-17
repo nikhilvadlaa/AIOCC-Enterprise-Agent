@@ -1,0 +1,4 @@
+ticket_id,created_at,customer_id,priority,status,subject,agent,tags,escalated
+T1001,2025-11-14T10:22:00Z,C1234,high,open,"checkout error",Riya,checkout;payment,true
+T1002,2025-11-15T11:00:00Z,C5678,medium,open,"login failure",Ravi,auth,false
+T1003,2025-11-15T12:30:00Z,C9999,high,open,"payment declined",Riya,payment,true
