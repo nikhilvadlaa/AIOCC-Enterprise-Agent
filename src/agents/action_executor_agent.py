@@ -50,26 +50,29 @@ class ActionExecutorAgent:
         if self._using_openapi and self.open_slack:
             return self.open_slack.post_message(channel=channel, text=message)
         if self.slack_local:
-            # slack_local.post_message(channel, message) may accept trace_id
-            try:
-                return self.slack_local.post_message(channel, message)
-            except TypeError:
-                return self.slack_local.post_message(channel, message)
-        return {"ok": True, "method": "mock", "message": message}
+            return self.slack_local.post_message(channel, message, trace_id=trace_id)
+        return {"ok": False, "error": "No slack tool available"}
+
+    def _send_approval(self, channel, message, action_id, trace_id=None):
+        # prefer openapi if available (assuming it supports approval)
+        # For now, we'll stick to local implementation for the demo
+        if self.slack_local:
+            return self.slack_local.send_approval_request(channel, message, action_id, trace_id=trace_id)
+        return {"ok": False, "error": "No slack tool available for approval"}
 
     def _create_task(self, title, body, assignee=None, trace_id=None):
         if self._using_openapi and self.open_task:
             return self.open_task.create_task(title=title, body=body, assignee=assignee)
         if self.task_local:
             return self.task_local.create_task(title=title, body=body, assignee=assignee, trace_id=trace_id)
-        return {"ok": True, "method": "mock", "task": {"id":"TASK-MOCK","name":title}}
+        return {"ok": False, "error": "No task tool available"}
 
     def _send_email(self, to, subject, body, from_email="noreply@example.com", trace_id=None):
         if self._using_openapi and self.open_email:
             return self.open_email.send_email(to=to, subject=subject, body=body, from_email=from_email)
         if self.email_local:
-            return self.email_local.send_email(to=to, subject=subject, body=body)
-        return {"ok": True, "method": "mock"}
+            return self.email_local.send_email(to=to, subject=subject, body=body, trace_id=trace_id)
+        return {"ok": False, "error": "No email tool available"}
 
     def execute_action(self, item: Dict, trace_id=None):
         action = item['action']
@@ -91,6 +94,16 @@ class ActionExecutorAgent:
             email_res = self._send_email(to=f"{owner}@example.com", subject="AIOCC Action Required", body=item.get('note',''))
             self._post_slack(channel="ops", message=f"[AIOCC] Manual triage requested. Email sent to {owner}@example.com", trace_id=trace_id)
             summary.update({'status':'email_sent', 'email': email_res})
+
+        elif any(risk in action.lower() for risk in ['restart', 'reboot', 'shutdown', 'delete', 'rollback']):
+            # High-risk action: Request Approval
+            approval_res = self._send_approval(
+                channel="ops", 
+                message=f"⚠️ *Approval Required*: Action `{action}` requested by {owner}.\nReason: {item.get('reason', 'No reason provided')}",
+                action_id=f"{action}_{trace_id or 'no_trace'}",
+                trace_id=trace_id
+            )
+            summary.update({'status': 'approval_requested', 'approval': approval_res})
 
         else:
             self._post_slack(channel="ops", message=f"[AIOCC] Unknown action: {action}", trace_id=trace_id)

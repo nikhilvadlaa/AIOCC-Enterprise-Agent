@@ -1,7 +1,10 @@
+slack_sdk
+sendgrid
+requests
+google-cloud-aiplatform
+google-cloud-secret-manager
+python-dotenv
 pandas
 numpy
-matplotlib
-python-dotenv
-requests
 reportlab
 scikit-learn

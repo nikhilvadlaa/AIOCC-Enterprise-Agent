@@ -1,11 +1,23 @@
 FROM python:3.11-slim
+
 WORKDIR /app
-# system deps for reportlab and other libs
-RUN apt-get update && apt-get install -y build-essential libjpeg-dev zlib1g-dev && rm -rf /var/lib/apt/lists/*
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libjpeg-dev \
+    zlib1g-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-# Copy project
+
+# Copy application code
 COPY . .
+
+# Set environment variables
 ENV PYTHONUNBUFFERED=1
-# Expose nothing; runner runs internal
+
+# Run the long-running process
 CMD ["python", "run_long_running.py"]

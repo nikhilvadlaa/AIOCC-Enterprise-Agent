@@ -1,0 +1,224 @@
+[
+  {
+    "type": "action_executed",
+    "action": {
+      "reason": "unknown",
+      "action": "human_investigate",
+      "owner": "ops_lead",
+      "note": "Manual triage required",
+      "impact": "unknown",
+      "confidence": 0.2
+    },
+    "summary": {
+      "action": "human_investigate",
+      "owner": "ops_lead",
+      "status": "email_sent",
+      "email": true
+    },
+    "timestamp": "2025-11-21T18:48:49.573747"
+  },
+  {
+    "type": "incident",
+    "trace_id": "b2bd05a5-501c-4af2-932f-599642c871e7",
+    "start": "2025-11-21T18:48:49.439214",
+    "end": "2025-11-21T18:48:49.589240",
+    "insights": {
+      "sales": {
+        "latest_rate": 0.0,
+        "avg_rate": 0.4,
+        "pct_change": -0.9999999974999999,
+        "z_score": -0.816496580927726,
+        "anomaly": false
+      },
+      "marketing": {
+        "latest_rate": 0.0167,
+        "avg_rate": 0.028066666666666667,
+        "pct_change": -0.40498810908593436,
+        "z_score": 0.0,
+        "anomaly": false
+      },
+      "support": {
+        "latest_count": 2,
+        "avg_count": 1.5,
+        "pct_change": 0.3333333331111111,
+        "z_score": 0.0,
+        "anomaly": false
+      },
+      "summary": "No major anomalies"
+    },
+    "reasons": [
+      {
+        "reason": "unknown",
+        "confidence": 0.2,
+        "detail": "no strong correlations found"
+      }
+    ],
+    "plan": [
+      {
+        "reason": "unknown",
+        "action": "human_investigate",
+        "owner": "ops_lead",
+        "note": "Manual triage required",
+        "impact": "unknown",
+        "confidence": 0.2
+      }
+    ],
+    "results": [
+      {
+        "action": "human_investigate",
+        "owner": "ops_lead",
+        "status": "email_sent",
+        "email": true
+      }
+    ],
+    "timestamp": "2025-11-21T18:48:49.612402"
+  },
+  {
+    "type": "action_executed",
+    "action": {
+      "reason": "unknown",
+      "action": "human_investigate",
+      "owner": "ops_lead",
+      "note": "Manual triage required",
+      "impact": "unknown",
+      "confidence": 0.2
+    },
+    "summary": {
+      "action": "human_investigate",
+      "owner": "ops_lead",
+      "status": "email_sent",
+      "email": true
+    },
+    "timestamp": "2025-11-21T19:19:55.794301"
+  },
+  {
+    "type": "incident",
+    "trace_id": "f3a78f20-c684-438f-88e9-92cc326079e8",
+    "start": "2025-11-21T19:19:55.724833",
+    "end": "2025-11-21T19:19:55.810199",
+    "insights": {
+      "sales": {
+        "latest_rate": 0.0,
+        "avg_rate": 0.4,
+        "pct_change": -0.9999999974999999,
+        "z_score": -0.816496580927726,
+        "anomaly": false
+      },
+      "marketing": {
+        "latest_rate": 0.0167,
+        "avg_rate": 0.028066666666666667,
+        "pct_change": -0.40498810908593436,
+        "z_score": 0.0,
+        "anomaly": false
+      },
+      "support": {
+        "latest_count": 2,
+        "avg_count": 1.5,
+        "pct_change": 0.3333333331111111,
+        "z_score": 0.0,
+        "anomaly": false
+      },
+      "summary": "No major anomalies"
+    },
+    "reasons": [
+      {
+        "reason": "unknown",
+        "confidence": 0.2,
+        "detail": "no strong correlations found"
+      }
+    ],
+    "plan": [
+      {
+        "reason": "unknown",
+        "action": "human_investigate",
+        "owner": "ops_lead",
+        "note": "Manual triage required",
+        "impact": "unknown",
+        "confidence": 0.2
+      }
+    ],
+    "results": [
+      {
+        "action": "human_investigate",
+        "owner": "ops_lead",
+        "status": "email_sent",
+        "email": true
+      }
+    ],
+    "timestamp": "2025-11-21T19:19:55.857497"
+  },
+  {
+    "type": "action_executed",
+    "action": {
+      "reason": "unknown",
+      "action": "human_investigate",
+      "owner": "ops_lead",
+      "note": "Manual triage required",
+      "impact": "unknown",
+      "confidence": 0.2
+    },
+    "summary": {
+      "action": "human_investigate",
+      "owner": "ops_lead",
+      "status": "email_sent",
+      "email": true
+    },
+    "timestamp": "2025-11-21T19:24:09.426817"
+  },
+  {
+    "type": "incident",
+    "trace_id": "578f66d6-da59-423a-806b-fff5b59ff4a4",
+    "start": "2025-11-21T19:24:08.782096",
+    "end": "2025-11-21T19:24:09.443092",
+    "insights": {
+      "sales": {
+        "latest_rate": 0.0,
+        "avg_rate": 0.4,
+        "pct_change": -0.9999999974999999,
+        "z_score": -0.816496580927726,
+        "anomaly": false
+      },
+      "marketing": {
+        "latest_rate": 0.0167,
+        "avg_rate": 0.028066666666666667,
+        "pct_change": -0.40498810908593436,
+        "z_score": 0.0,
+        "anomaly": false
+      },
+      "support": {
+        "latest_count": 2,
+        "avg_count": 1.5,
+        "pct_change": 0.3333333331111111,
+        "z_score": 0.0,
+        "anomaly": false
+      },
+      "summary": "No major anomalies"
+    },
+    "reasons": [
+      {
+        "reason": "unknown",
+        "confidence": 0.2,
+        "detail": "no strong correlations found"
+      }
+    ],
+    "plan": [
+      {
+        "reason": "unknown",
+        "action": "human_investigate",
+        "owner": "ops_lead",
+        "note": "Manual triage required",
+        "impact": "unknown",
+        "confidence": 0.2
+      }
+    ],
+    "results": [
+      {
+        "action": "human_investigate",
+        "owner": "ops_lead",
+        "status": "email_sent",
+        "email": true
+      }
+    ],
+    "timestamp": "2025-11-21T19:24:09.476163"
+  }
+]

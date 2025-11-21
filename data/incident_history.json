@@ -1,0 +1,35 @@
+[
+    {
+        "id": "INC-001",
+        "symptoms": "High latency on checkout service, CPU usage > 90%",
+        "root_cause": "Memory leak in payment gateway connector v2.1",
+        "resolution": "Rolled back payment connector to v2.0 and restarted service.",
+        "tags": [
+            "latency",
+            "checkout",
+            "memory_leak"
+        ]
+    },
+    {
+        "id": "INC-002",
+        "symptoms": "Database connection timeout, 500 errors on login",
+        "root_cause": "Max connection pool limit reached due to stuck threads",
+        "resolution": "Increased connection pool size to 200 and killed stuck threads.",
+        "tags": [
+            "database",
+            "timeout",
+            "login"
+        ]
+    },
+    {
+        "id": "INC-003",
+        "symptoms": "Disk space warning on log server, 95% full",
+        "root_cause": "Log rotation configuration failed",
+        "resolution": "Manually compressed old logs and fixed logrotate.conf permissions.",
+        "tags": [
+            "disk_space",
+            "logs",
+            "config"
+        ]
+    }
+]

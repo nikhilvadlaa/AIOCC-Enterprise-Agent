@@ -7,10 +7,12 @@ RootCauseAgent
 """
 
 from typing import Dict, List
+from src.services.knowledge_base import KnowledgeBase
 
 class RootCauseAgent:
     def __init__(self, memory_bank):
         self.memory = memory_bank
+        self.kb = KnowledgeBase()
 
     def correlate(self, insights: Dict, datasets: Dict) -> List[Dict]:
         reasons = []
@@ -35,6 +37,21 @@ class RootCauseAgent:
         # If marketing drop only
         if insights.get('marketing_drop', False) and insights.get('sales_conversion_change', 0) >= -0.05:
             reasons.append({'reason': 'campaign_performance_issue', 'confidence': 0.75, 'detail': 'marketing conversion decreased'})
+
+        # Check Knowledge Base for similar incidents
+        query_terms = []
+        if insights.get('support_spike'): query_terms.append("support")
+        if insights.get('sales_conversion_change', 0) < -0.05: query_terms.append("latency checkout")
+        
+        if query_terms:
+            query = " ".join(query_terms)
+            similar_incidents = self.kb.search(query)
+            for inc in similar_incidents:
+                reasons.append({
+                    'reason': 'similar_past_incident',
+                    'confidence': 0.6,
+                    'detail': f"Matches past incident {inc['id']}: {inc['root_cause']}"
+                })
 
         # If nothing found, return a low-confidence generic reason
         if not reasons:

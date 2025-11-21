@@ -1,6 +1,10 @@
 # run_cycle.py
 import os
 import sys
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 # ensure src is importable
 sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
 
@@ -18,6 +22,8 @@ from src.agents.root_cause_agent import RootCauseAgent
 from src.agents.decision_maker_agent import DecisionMakerAgent
 from src.agents.action_executor_agent import ActionExecutorAgent
 from src.agents.supervisor_agent import SupervisorAgent
+
+from src.agents.llm_reasoning_agent import LLMReasoningAgent
 
 def main():
     # Paths: adjust if your data is in a different location
@@ -42,7 +48,15 @@ def main():
     rc = RootCauseAgent(memory_bank=memory)
     dm = DecisionMakerAgent()
     ae = ActionExecutorAgent(slack_notifier=slack, task_manager=tasks, email_sender=email, pdf_generator=pdf, memory_bank=memory)
-    sup = SupervisorAgent(data_collector=dc, analytics_agent=an, root_cause_agent=rc, decision_maker=dm, action_executor=ae, memory=memory)
+    
+    # LLM Agent (optional, requires Vertex AI)
+    llm = None
+    try:
+        llm = LLMReasoningAgent()
+    except Exception as e:
+        print(f"Warning: Could not instantiate LLMReasoningAgent: {e}")
+
+    sup = SupervisorAgent(data_collector=dc, analytics_agent=an, root_cause_agent=rc, decision_maker=dm, action_executor=ae, memory=memory, llm_agent=llm)
 
     # Run one cycle
     incident = sup.run_cycle()
