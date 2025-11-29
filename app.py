@@ -126,7 +126,8 @@ with tab2:
         st.session_state.logs = []
         st.session_state.incident_state = "running"
         
-        progress_bar = st.progress(0)
+        current_progress = 0
+        progress_bar = st.progress(current_progress)
         status_text = st.empty()
         log_container = st.container()
         
@@ -155,7 +156,8 @@ with tab2:
                 break
                 
             time.sleep(1) # Simulate processing time for visual effect
-            progress_bar.progress(progress_bar.value + 15)
+            current_progress = min(current_progress + 15, 90)
+            progress_bar.progress(current_progress)
 
     if st.session_state.incident_state == "waiting_approval":
         st.warning("⚠️ Approval Required for Remediation Plan")
