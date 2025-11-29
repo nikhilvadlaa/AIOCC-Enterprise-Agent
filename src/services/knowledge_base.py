@@ -16,6 +16,42 @@ class KnowledgeBase:
             name="incident_history",
             embedding_function=self.ef
         )
+        
+        # Seed data if empty (for Demo/Competition purposes)
+        if self.collection.count() == 0:
+            self._seed_data()
+
+    def _seed_data(self):
+        """Seeds the knowledge base with sample incidents for demonstration."""
+        print("Seeding Knowledge Base with sample data...")
+        sample_incidents = [
+            {
+                "id": "inc-001",
+                "summary": "High Latency in Payment Gateway due to Redis Cache Miss",
+                "resolution": [{"action": "Scale Up Redis", "target": "Cache Cluster"}],
+                "root_cause": {"reason": "Cache Eviction Policy"}
+            },
+            {
+                "id": "inc-002",
+                "summary": "Database Connection Timeout during Peak Load",
+                "resolution": [{"action": "Increase Connection Pool Size", "target": "Primary DB"}],
+                "root_cause": {"reason": "Connection Pool Exhaustion"}
+            },
+            {
+                "id": "inc-003",
+                "summary": "API 500 Errors caused by Memory Leak in Service A",
+                "resolution": [{"action": "Restart Service", "target": "Service A"}],
+                "root_cause": {"reason": "Memory Leak"}
+            }
+        ]
+        
+        for inc in sample_incidents:
+            self.add_incident(
+                trace_id=inc["id"],
+                summary=inc["summary"],
+                resolution=inc["resolution"],
+                root_cause=inc["root_cause"]
+            )
 
     def add_incident(self, trace_id: str, summary: str, resolution: list, root_cause: dict):
         """
