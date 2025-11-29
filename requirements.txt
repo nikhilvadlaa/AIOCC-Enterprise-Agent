@@ -8,3 +8,8 @@ pandas
 numpy
 reportlab
 scikit-learn
+streamlit
+chromadb
+sentence-transformers
+plotly
+watchdog

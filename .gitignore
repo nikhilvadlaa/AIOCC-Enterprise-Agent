@@ -139,3 +139,11 @@ cython_debug/
 .vscode/
 *.swp
 *.swo
+
+# Project Runtime Artifacts
+slack_logs.json
+memory.json
+tasks.json
+report.pdf
+data/chroma_db/
+

@@ -21,14 +21,8 @@ steps:
       - '--platform'
       - 'managed'
       - '--allow-unauthenticated'
-      - '--set-env-vars'
-      - 'SLACK_BOT_TOKEN=${_SLACK_BOT_TOKEN},SENDGRID_API_KEY=${_SENDGRID_API_KEY},TRELLO_API_KEY=${_TRELLO_API_KEY},TRELLO_TOKEN=${_TRELLO_TOKEN}'
+      - '--set-secrets'
+      - 'SLACK_BOT_TOKEN=SLACK_BOT_TOKEN:latest,SENDGRID_API_KEY=SENDGRID_API_KEY:latest,TRELLO_API_KEY=TRELLO_API_KEY:latest,TRELLO_TOKEN=TRELLO_TOKEN:latest'
 
 images:
   - 'gcr.io/$PROJECT_ID/aiocc-runner'
-
-substitutions:
-    _SLACK_BOT_TOKEN: "projects/$PROJECT_ID/secrets/SLACK_BOT_TOKEN/versions/latest"
-    _SENDGRID_API_KEY: "projects/$PROJECT_ID/secrets/SENDGRID_API_KEY/versions/latest"
-    _TRELLO_API_KEY: "projects/$PROJECT_ID/secrets/TRELLO_API_KEY/versions/latest"
-    _TRELLO_TOKEN: "projects/$PROJECT_ID/secrets/TRELLO_TOKEN/versions/latest"

@@ -1,8 +1,7 @@
-version: "3.8"
 services:
   agent_tools_api:
     build:
-      context: ./agent_tools_api
+      context: ./src/agent_tools_api
     env_file: .env
     ports:
       - "8080:8080"
@@ -15,7 +14,9 @@ services:
     env_file: .env
     depends_on:
       - agent_tools_api
+    ports:
+      - "8501:8501"
     volumes:
       - ./:/app
-    command: ["python", "run_long_running.py"]
+    # command: ["streamlit", "run", "app.py"] # Defined in Dockerfile
     restart: unless-stopped

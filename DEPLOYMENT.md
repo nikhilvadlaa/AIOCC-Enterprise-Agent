@@ -41,11 +41,18 @@ This command will:
 
 ## Step 3: CI/CD with GitHub Actions
 
-1.  Create a Service Account key (JSON) for your deployer service account.
-2.  Add the following secrets to your GitHub repository:
+1.  **Configure Workload Identity Federation**:
+    -   Create a Workload Identity Pool and Provider.
+    -   Grant the GitHub Actions Service Account access to the Provider.
+    -   Bind the Service Account to the Workload Identity Pool.
+
+2.  **Add Secrets to GitHub**:
     -   `GCP_PROJECT_ID`: Your GCP project ID.
-    -   `GCP_SA_KEY`: The content of the JSON key file.
-3.  Push to the `main` branch to trigger the deployment.
+    -   `GCP_WORKLOAD_IDENTITY_PROVIDER`: The full resource name of the Workload Identity Provider (e.g., `projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider`).
+    -   `GCP_SERVICE_ACCOUNT`: The email of the Service Account used for deployment (e.g., `deployer@my-project.iam.gserviceaccount.com`).
+
+3.  **Trigger Deployment**:
+    -   Push to the `main` branch to trigger the workflow.
 
 ## Verification
 

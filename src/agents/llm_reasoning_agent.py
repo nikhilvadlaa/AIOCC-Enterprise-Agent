@@ -1,21 +1,62 @@
 import json
 import re
+import os
+import vertexai
 from typing import List, Dict, Any, Optional
 from vertexai.preview.generative_models import GenerativeModel, GenerationConfig
+from src.services.knowledge_base import KnowledgeBase
 
 class LLMReasoningAgent:
-    def __init__(self, model_name: str = "gemini-1.5-flash", temperature: float = 0.2):
+    def __init__(self, model_name: str = "gemini-1.5-flash", temperature: float = 0.2, knowledge_base: Optional[KnowledgeBase] = None):
+        # Initialize Vertex AI if project ID is set
+        project_id = os.getenv("GCP_PROJECT_ID") or os.getenv("GOOGLE_CLOUD_PROJECT")
+        location = os.getenv("GCP_LOCATION", "us-central1")
+        if project_id:
+            vertexai.init(project=project_id, location=location)
+            
         self.model = GenerativeModel(model_name)
         self.generation_config = GenerationConfig(
             temperature=temperature,
             response_mime_type="application/json"
         )
+        self.knowledge_base = knowledge_base
 
     def refine_plan(self, raw_plan: List[Dict], insights: Dict, root_causes: List[Dict]) -> List[Dict]:
         """
         Refines the initial action plan using LLM reasoning.
         Returns a list of refined action steps.
         """
+        # DEMO MODE: Bypass LLM if enabled
+        if os.getenv("DEMO_MODE", "false").lower() == "true":
+            print("[LLM] Demo Mode enabled. Returning simulated response.")
+            return [
+                {
+                    "action": "Scale Up Database",
+                    "target": "Primary DB Cluster",
+                    "reasoning": "High CPU utilization (95%) detected. Scaling up will alleviate pressure immediately.",
+                    "priority": "High",
+                    "risk_assessment": "Low risk. Zero-downtime scaling."
+                },
+                {
+                    "action": "Clear Redis Cache",
+                    "target": "Cache Layer",
+                    "reasoning": "Stale cache entries might be contributing to latency.",
+                    "priority": "Medium",
+                    "risk_assessment": "Medium risk. Temporary cache miss spike expected."
+                }
+            ]
+
+        similar_incidents = []
+        if self.knowledge_base:
+            # Create a query from insights summary or root causes
+            query = f"{insights.get('summary', '')} {root_causes[0].get('description', '') if root_causes else ''}"
+            try:
+                results = self.knowledge_base.search_similar(query)
+                if results and results['documents']:
+                    similar_incidents = results['documents'][0]
+            except Exception as e:
+                print(f"Error searching knowledge base: {e}")
+
         prompt = f"""
         You are an expert Enterprise AIOps Agent. Your goal is to refine an initial remediation plan based on system insights and identified root causes.
 
@@ -26,11 +67,14 @@ class LLMReasoningAgent:
         **Root Causes:**
         {json.dumps(root_causes, indent=2)}
 
+        **Similar Past Incidents (RAG):**
+        {json.dumps(similar_incidents, indent=2)}
+
         **Initial Plan:**
         {json.dumps(raw_plan, indent=2)}
 
         ### Instructions
-        1.  **Analyze**: Review the insights and root causes to understand the incident context.
+        1.  **Analyze**: Review the insights, root causes, and similar past incidents.
         2.  **Prioritize**: Reorder steps to address the most critical root causes first.
         3.  **Enhance**: Add specific details, reasoning, and safety checks to each step.
         4.  **Format**: Return the result as a JSON array of action objects.
@@ -78,4 +122,3 @@ class LLMReasoningAgent:
         except Exception as e:
             print(f"Error generating refined plan: {e}")
             return raw_plan
-

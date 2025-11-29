@@ -20,4 +20,8 @@ COPY . .
 ENV PYTHONUNBUFFERED=1
 
 # Run the long-running process
-CMD ["python", "run_long_running.py"]
+# Expose Streamlit port
+EXPOSE 8501
+
+# Run the Streamlit app
+CMD ["streamlit", "run", "app.py", "--server.address=0.0.0.0"]

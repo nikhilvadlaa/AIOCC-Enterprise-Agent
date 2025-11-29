@@ -13,7 +13,8 @@ In modern enterprise environments, **Mean Time To Resolution (MTTR)** is the bot
 ### Key Innovations
 1.  **Multi-Agent Architecture**: Specialized agents for Data Collection, Analysis, Root Cause, and Execution.
 2.  **RAG-Powered Memory**: Learns from past incidents. If a "High Latency" issue was fixed by a rollback last week, AIOCC remembers and suggests it immediately.
-3.  **Human-in-the-Loop Trust**: For high-risk actions (e.g., "Restart Database"), AIOCC sends an **Interactive Slack Request**. The human clicks "Approve", and the agent executes.
+3.  **Human-in-the-Loop Trust**: For high-risk actions (e.g., "Restart Database"), AIOCC sends an **Interactive Slack Request** or uses the **Streamlit Dashboard** for approval.
+4.  **Interactive Dashboard**: A "Top 3 Winner" caliber Streamlit UI for real-time monitoring and control.
 
 ## 3. Architecture
 
@@ -38,9 +39,10 @@ graph TD
     subgraph "Execution & Feedback"
         AE -->|API Call| Slack[Slack (Interactive)]
         AE -->|API Call| Email[SendGrid]
-        AE -->|API Call| Trello[Trello]
         
-        Slack -->|Approve/Deny| AE
+        User[User] <-->|View/Control| UI[Streamlit Dashboard]
+        UI <-->|Control| Supervisor[Supervisor Agent]
+        Supervisor --> DC
     end
 ```
 
@@ -48,7 +50,7 @@ graph TD
 This project demonstrates advanced agentic patterns:
 -   **Retrieval Augmented Generation (RAG)**: `RootCauseAgent` queries a vector-like knowledge base of past incidents to improve diagnosis accuracy.
 -   **Tool Use & Function Calling**: Agents use real APIs (Slack SDK, SendGrid) to interact with the world.
--   **Human-in-the-Loop**: `ActionExecutorAgent` pauses for human approval on destructive actions using Slack Block Kit.
+-   **Human-in-the-Loop**: `ActionExecutorAgent` pauses for human approval on destructive actions using Slack Block Kit or the Dashboard.
 
 ## 5. Getting Started
 
@@ -74,6 +76,13 @@ This project demonstrates advanced agentic patterns:
     ```
 
 ### Running the Agents
+
+#### Option 1: Interactive Dashboard (Recommended)
+```bash
+streamlit run app.py
+```
+
+#### Option 2: CLI Mode
 ```bash
 python run_cycle.py
 ```
