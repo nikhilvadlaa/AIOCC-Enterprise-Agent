@@ -102,7 +102,7 @@ flowchart TD
         email[Email Sender]
         task[Task Manager]
         pdf[PDF Report Generator]
-        openapi[Agent Tools API (FastAPI)]
+        openapi["Agent Tools API (FastAPI)"]
     end
 
     subgraph Memory
