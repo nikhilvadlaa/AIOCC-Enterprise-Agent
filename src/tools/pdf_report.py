@@ -50,7 +50,7 @@ class PDFReportGenerator:
         y -= 20
         c.setFont("Helvetica", 12)
         for p in plan:
-            c.drawString(40, y, f"- {p['action']} (confidence: {p['confidence']})")
+            c.drawString(40, y, f"- {p.get('action', 'Unknown')} (confidence: {p.get('confidence', 'N/A')})")
             y -= 20
 
         # Results

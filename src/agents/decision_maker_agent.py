@@ -5,10 +5,11 @@ DecisionMakerAgent
 - For demo: actions are templated with confidence and impact estimates
 """
 
-from typing import List, Dict
+from typing import List, Dict, Optional
+from src.utils.logger import logger
 
 class DecisionMakerAgent:
-    def __init__(self, business_rules: Dict = None):
+    def __init__(self, business_rules: Optional[Dict] = None):
         # business_rules can map reasons -> default actions/owners
         self.rules = business_rules or {
             'low_campaign_conversion': {'action':'pause_campaign','owner':'marketing_lead','note':'Investigate targeting and creatives','impact':'reduce wasted spend'},
@@ -18,8 +19,10 @@ class DecisionMakerAgent:
             'recurrent_issue': {'action':'create_postmortem','owner':'ops_lead','note':'Deep dive recurring incidents','impact':'long term stability'},
             'unknown': {'action':'human_investigate','owner':'ops_lead','note':'Manual triage required','impact':'unknown'}
         }
+        logger.info("DecisionMakerAgent initialized.")
 
     def make_plan(self, reasons: List[Dict]) -> List[Dict]:
+        logger.info("Creating action plan based on reasons...")
         plan = []
         # Sort reasons by confidence desc
         sorted_reasons = sorted(reasons, key=lambda r: r.get('confidence',0), reverse=True)
@@ -35,4 +38,6 @@ class DecisionMakerAgent:
                 'confidence': r.get('confidence', 0.5)
             }
             plan.append(plan_item)
+        
+        logger.info(f"Plan created with {len(plan)} items.")
         return plan

@@ -1,20 +1,31 @@
 import json
 import re
-import os
 import vertexai
 from typing import List, Dict, Any, Optional
 from vertexai.preview.generative_models import GenerativeModel, GenerationConfig
 from src.services.knowledge_base import KnowledgeBase
+from src.config import Config
+from src.utils.logger import logger
 
 class LLMReasoningAgent:
     def __init__(self, model_name: str = "gemini-1.5-flash", temperature: float = 0.2, knowledge_base: Optional[KnowledgeBase] = None):
-        # Initialize Vertex AI if project ID is set
-        project_id = os.getenv("GCP_PROJECT_ID") or os.getenv("GOOGLE_CLOUD_PROJECT")
-        location = os.getenv("GCP_LOCATION", "us-central1")
-        if project_id:
-            vertexai.init(project=project_id, location=location)
-            
-        self.model = GenerativeModel(model_name)
+        # Initialize Vertex AI if project ID is set and NOT in demo mode
+        project_id = Config.GCP_PROJECT_ID
+        location = Config.GCP_LOCATION
+        is_demo = Config.DEMO_MODE
+        
+        if project_id and not is_demo:
+            try:
+                vertexai.init(project=project_id, location=location)
+                self.model = GenerativeModel(model_name)
+                logger.info(f"LLM initialized with model: {model_name}")
+            except Exception as e:
+                logger.error(f"Failed to initialize Vertex AI: {e}")
+                self.model = None
+        else:
+            logger.info("LLM running in DEMO MODE or Project ID not set.")
+            self.model = None
+
         self.generation_config = GenerationConfig(
             temperature=temperature,
             response_mime_type="application/json"
@@ -27,8 +38,8 @@ class LLMReasoningAgent:
         Returns a list of refined action steps.
         """
         # DEMO MODE: Bypass LLM if enabled
-        if os.getenv("DEMO_MODE", "false").lower() == "true":
-            print("[LLM] Demo Mode enabled. Returning simulated response.")
+        if Config.DEMO_MODE:
+            logger.info("[LLM] Demo Mode enabled. Returning simulated response.")
             return [
                 {
                     "action": "Scale Up Database",
@@ -55,7 +66,7 @@ class LLMReasoningAgent:
                 if results and results['documents']:
                     similar_incidents = results['documents'][0]
             except Exception as e:
-                print(f"Error searching knowledge base: {e}")
+                logger.error(f"Error searching knowledge base: {e}")
 
         prompt = f"""
         You are an expert Enterprise AIOps Agent. Your goal is to refine an initial remediation plan based on system insights and identified root causes.
@@ -92,6 +103,10 @@ class LLMReasoningAgent:
         """
 
         try:
+            if not self.model:
+                logger.warning("LLM model not initialized. Returning original plan.")
+                return raw_plan
+
             response = self.model.generate_content(
                 prompt,
                 generation_config=self.generation_config
@@ -116,9 +131,9 @@ class LLMReasoningAgent:
             return refined_plan
 
         except json.JSONDecodeError as e:
-            print(f"Error parsing LLM response: {e}")
+            logger.error(f"Error parsing LLM response: {e}")
             # Fallback: return original plan with a note
             return raw_plan
         except Exception as e:
-            print(f"Error generating refined plan: {e}")
+            logger.error(f"Error generating refined plan: {e}")
             return raw_plan

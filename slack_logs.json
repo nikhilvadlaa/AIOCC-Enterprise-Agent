@@ -1,0 +1,155 @@
+[
+  {
+    "timestamp": "2025-11-30T06:31:15.784387",
+    "channel": "ops",
+    "message": "[AIOCC] Manual triage requested. Email sent to ops_lead@example.com",
+    "result": {
+      "ok": true,
+      "mock": true
+    }
+  },
+  {
+    "timestamp": "2025-11-30T06:33:57.962496",
+    "channel": "ops",
+    "message": "[AIOCC] Manual triage requested. Email sent to ops_lead@example.com",
+    "result": {
+      "ok": true,
+      "mock": true
+    }
+  },
+  {
+    "timestamp": "2025-11-30T06:58:41.913308",
+    "channel": "ops",
+    "message": "[AIOCC] Manual triage requested. Email sent to ops_lead@example.com",
+    "result": {
+      "ok": true,
+      "mock": true
+    }
+  },
+  {
+    "timestamp": "2025-11-30T07:15:30.334246",
+    "channel": "ops",
+    "message": "[AIOCC] Manual triage requested. Email sent to ops_lead@example.com",
+    "result": {
+      "ok": true,
+      "mock": true
+    }
+  },
+  {
+    "timestamp": "2025-11-30T07:19:55.527250",
+    "channel": "ops",
+    "message": "[AIOCC] Unknown action: Scale Up Database",
+    "result": {
+      "ok": true,
+      "mock": true
+    }
+  },
+  {
+    "timestamp": "2025-11-30T07:19:55.589222",
+    "channel": "ops",
+    "message": "[AIOCC] Unknown action: Clear Redis Cache",
+    "result": {
+      "ok": true,
+      "mock": true
+    }
+  },
+  {
+    "timestamp": "2025-11-30T07:23:16.194152",
+    "channel": "ops",
+    "message": "[AIOCC] Executing demo action: Scale Up Database",
+    "result": {
+      "ok": true,
+      "mock": true
+    }
+  },
+  {
+    "timestamp": "2025-11-30T07:23:16.263447",
+    "channel": "ops",
+    "message": "[AIOCC] Executing demo action: Clear Redis Cache",
+    "result": {
+      "ok": true,
+      "mock": true
+    }
+  },
+  {
+    "timestamp": "2025-11-30T12:59:13.369205",
+    "channel": "ops",
+    "message": "[AIOCC] Manual triage requested. Email sent to ops_lead@example.com",
+    "result": {
+      "ok": true,
+      "mock": true
+    }
+  },
+  {
+    "timestamp": "2025-11-30T18:37:25.413731",
+    "channel": "ops",
+    "message": "[AIOCC] Executing demo action: Scale Up Database",
+    "result": {
+      "ok": true,
+      "mock": true
+    }
+  },
+  {
+    "timestamp": "2025-11-30T18:37:25.461311",
+    "channel": "ops",
+    "message": "[AIOCC] Executing demo action: Clear Redis Cache",
+    "result": {
+      "ok": true,
+      "mock": true
+    }
+  },
+  {
+    "timestamp": "2025-11-30T18:40:23.709518",
+    "channel": "ops",
+    "message": "[AIOCC] Executing demo action: Scale Up Database",
+    "result": {
+      "ok": true,
+      "mock": true
+    }
+  },
+  {
+    "timestamp": "2025-11-30T18:40:23.766031",
+    "channel": "ops",
+    "message": "[AIOCC] Executing demo action: Clear Redis Cache",
+    "result": {
+      "ok": true,
+      "mock": true
+    }
+  },
+  {
+    "timestamp": "2025-11-30T18:44:09.173205",
+    "channel": "ops",
+    "message": "[AIOCC] Executing demo action: Scale Up Database",
+    "result": {
+      "ok": true,
+      "mock": true
+    }
+  },
+  {
+    "timestamp": "2025-11-30T18:44:09.268658",
+    "channel": "ops",
+    "message": "[AIOCC] Executing demo action: Clear Redis Cache",
+    "result": {
+      "ok": true,
+      "mock": true
+    }
+  },
+  {
+    "timestamp": "2025-11-30T18:46:46.100866",
+    "channel": "ops",
+    "message": "[AIOCC] Executing demo action: Scale Up Database",
+    "result": {
+      "ok": true,
+      "mock": true
+    }
+  },
+  {
+    "timestamp": "2025-11-30T18:46:46.162862",
+    "channel": "ops",
+    "message": "[AIOCC] Executing demo action: Clear Redis Cache",
+    "result": {
+      "ok": true,
+      "mock": true
+    }
+  }
+]

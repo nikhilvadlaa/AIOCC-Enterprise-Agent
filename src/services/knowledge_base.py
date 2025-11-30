@@ -2,28 +2,40 @@ import chromadb
 from chromadb.utils import embedding_functions
 import json
 import os
+from typing import List, Dict, Any, Optional
+
+from src.config import Config
+from src.utils.logger import logger
 
 class KnowledgeBase:
-    def __init__(self, path="data/chroma_db"):
+    def __init__(self, path: Optional[str] = None):
+        # Use Config path if not provided
+        self.path = path or str(Config.CHROMA_DB_DIR)
+        
         # Ensure the directory exists
-        os.makedirs(path, exist_ok=True)
+        os.makedirs(self.path, exist_ok=True)
         
-        self.client = chromadb.PersistentClient(path=path)
-        # Use a lightweight model for embeddings
-        self.ef = embedding_functions.SentenceTransformerEmbeddingFunction(model_name="all-MiniLM-L6-v2")
-        
-        self.collection = self.client.get_or_create_collection(
-            name="incident_history",
-            embedding_function=self.ef
-        )
-        
-        # Seed data if empty (for Demo/Competition purposes)
-        if self.collection.count() == 0:
-            self._seed_data()
+        try:
+            self.client = chromadb.PersistentClient(path=self.path)
+            # Use a lightweight model for embeddings
+            self.ef = embedding_functions.SentenceTransformerEmbeddingFunction(model_name="all-MiniLM-L6-v2")
+            
+            self.collection = self.client.get_or_create_collection(
+                name="incident_history",
+                embedding_function=self.ef
+            )
+            logger.info(f"KnowledgeBase initialized at {self.path}")
+            
+            # Seed data if empty (for Demo/Competition purposes)
+            if self.collection.count() == 0:
+                self._seed_data()
+        except Exception as e:
+            logger.error(f"Failed to initialize KnowledgeBase: {e}")
+            raise
 
     def _seed_data(self):
         """Seeds the knowledge base with sample incidents for demonstration."""
-        print("Seeding Knowledge Base with sample data...")
+        logger.info("Seeding Knowledge Base with sample data...")
         sample_incidents = [
             {
                 "id": "inc-001",
@@ -53,7 +65,7 @@ class KnowledgeBase:
                 root_cause=inc["root_cause"]
             )
 
-    def add_incident(self, trace_id: str, summary: str, resolution: list, root_cause: dict):
+    def add_incident(self, trace_id: str, summary: str, resolution: List[Dict], root_cause: Dict):
         """
         Adds a resolved incident to the knowledge base.
         """
@@ -69,8 +81,9 @@ class KnowledgeBase:
             metadatas=[metadata],
             ids=[trace_id]
         )
+        logger.info(f"Added incident {trace_id} to Knowledge Base.")
 
-    def search_similar(self, query: str, n_results: int = 3):
+    def search_similar(self, query: str, n_results: int = 3) -> Dict[str, Any]:
         """
         Searches for similar incidents based on the query (e.g., current insights).
         """

@@ -6,15 +6,19 @@ RootCauseAgent
 - Uses simple heuristics + memory lookup to create candidate reasons
 """
 
-from typing import Dict, List
+from typing import Dict, List, Any, Optional
 from src.services.knowledge_base import KnowledgeBase
+from src.utils.logger import logger
 
 class RootCauseAgent:
-    def __init__(self, memory_bank):
+    def __init__(self, memory_bank: Any, knowledge_base: Optional[KnowledgeBase] = None):
         self.memory = memory_bank
-        self.kb = KnowledgeBase()
+        # Use provided KB or create a new one (though DI is preferred)
+        self.kb = knowledge_base or KnowledgeBase()
+        logger.info("RootCauseAgent initialized.")
 
     def correlate(self, insights: Dict, datasets: Dict) -> List[Dict]:
+        logger.info("Correlating insights to find root causes...")
         reasons = []
 
         # If sales conversion dropped significantly -> check marketing and support
@@ -45,16 +49,38 @@ class RootCauseAgent:
         
         if query_terms:
             query = " ".join(query_terms)
-            similar_incidents = self.kb.search(query)
-            for inc in similar_incidents:
-                reasons.append({
-                    'reason': 'similar_past_incident',
-                    'confidence': 0.6,
-                    'detail': f"Matches past incident {inc['id']}: {inc['root_cause']}"
-                })
+            try:
+                similar_incidents = self.kb.search_similar(query)
+                # Parse results from ChromaDB format
+                if similar_incidents and similar_incidents.get('documents'):
+                    # Chroma returns list of lists for documents, metadatas, ids
+                    docs = similar_incidents['documents'][0]
+                    metas = similar_incidents['metadatas'][0]
+                    ids = similar_incidents['ids'][0]
+                    
+                    for i, doc in enumerate(docs):
+                        # Extract root cause from metadata if available
+                        meta = metas[i] if i < len(metas) else {}
+                        # We might need to parse the JSON string in metadata
+                        import json
+                        rc_str = meta.get('root_cause', '{}')
+                        try:
+                            rc_data = json.loads(rc_str)
+                            reason_text = rc_data.get('reason', 'similar incident')
+                        except:
+                            reason_text = 'similar incident'
+
+                        reasons.append({
+                            'reason': 'similar_past_incident',
+                            'confidence': 0.6,
+                            'detail': f"Matches past incident {ids[i]}: {reason_text}"
+                        })
+            except Exception as e:
+                logger.error(f"Error searching knowledge base: {e}")
 
         # If nothing found, return a low-confidence generic reason
         if not reasons:
             reasons.append({'reason': 'unknown', 'confidence': 0.2, 'detail': 'no strong correlations found'})
 
+        logger.info(f"Identified {len(reasons)} potential root causes.")
         return reasons

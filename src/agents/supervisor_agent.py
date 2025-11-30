@@ -7,9 +7,21 @@ SupervisorAgent
 
 import uuid
 from datetime import datetime
+from typing import Dict, List, Optional, Any, Generator
+
+from src.utils.logger import logger
 
 class SupervisorAgent:
-    def __init__(self, data_collector, analytics_agent, root_cause_agent, decision_maker, action_executor, memory, llm_agent=None):
+    def __init__(
+        self, 
+        data_collector: Any, 
+        analytics_agent: Any, 
+        root_cause_agent: Any, 
+        decision_maker: Any, 
+        action_executor: Any, 
+        memory: Any, 
+        llm_agent: Optional[Any] = None
+    ):
         self.dc = data_collector
         self.an = analytics_agent
         self.rc = root_cause_agent
@@ -18,31 +30,31 @@ class SupervisorAgent:
         self.memory = memory
         self.llm = llm_agent
 
-    def run_cycle(self):
+    def run_cycle(self) -> Dict[str, Any]:
         trace_id = str(uuid.uuid4())
         start = datetime.utcnow().isoformat()
-        print(f"[SUPERVISOR] Starting cycle trace_id={trace_id} at {start}")
+        logger.info(f"[SUPERVISOR] Starting cycle trace_id={trace_id} at {start}")
 
         datasets = self.dc.run()
         insights = self.an.analyze(datasets)
-        print(f"[SUPERVISOR] Insights: {insights.get('summary')}")
+        logger.info(f"[SUPERVISOR] Insights: {insights.get('summary')}")
 
         reasons = self.rc.correlate(insights, datasets)
-        print(f"[SUPERVISOR] Reasons: {[r['reason'] for r in reasons]}")
+        logger.info(f"[SUPERVISOR] Reasons: {[r['reason'] for r in reasons]}")
 
         plan = self.dm.make_plan(reasons)
-        print(f"[SUPERVISOR] Initial Plan: {[p['action'] for p in plan]}")
+        logger.info(f"[SUPERVISOR] Initial Plan: {[p['action'] for p in plan]}")
 
         # Refine plan with LLM if available
         if self.llm and plan:
-            print("[SUPERVISOR] Refining plan with LLM...")
+            logger.info("[SUPERVISOR] Refining plan with LLM...")
             try:
                 refined_plan = self.llm.refine_plan(plan, insights, reasons)
                 if refined_plan:
                     plan = refined_plan
-                    print(f"[SUPERVISOR] Refined Plan: {[p.get('action') for p in plan]}")
+                    logger.info(f"[SUPERVISOR] Refined Plan: {[p.get('action') for p in plan]}")
             except Exception as e:
-                print(f"[SUPERVISOR] LLM refinement failed, using initial plan. Error: {e}")
+                logger.error(f"[SUPERVISOR] LLM refinement failed, using initial plan. Error: {e}")
 
         results = []
         if plan:
@@ -61,10 +73,10 @@ class SupervisorAgent:
         }
         self.memory.add_event(incident)
 
-        print(f"[SUPERVISOR] Cycle complete trace_id={trace_id}; actions_executed={len(results)}")
+        logger.info(f"[SUPERVISOR] Cycle complete trace_id={trace_id}; actions_executed={len(results)}")
         return incident
 
-    def run_step_by_step(self):
+    def run_step_by_step(self) -> Generator[Dict[str, Any], None, None]:
         """
         Generator that yields the current state of the incident resolution process.
         """
@@ -92,13 +104,13 @@ class SupervisorAgent:
                     plan = refined_plan
                     yield {"step": "refined_plan", "plan": plan, "status": "Plan Refined by LLM"}
             except Exception as e:
-                print(f"[SUPERVISOR] LLM refinement failed: {e}")
+                logger.error(f"[SUPERVISOR] LLM refinement failed: {e}")
                 yield {"step": "refined_plan_error", "error": str(e), "status": "LLM Refinement Failed"}
 
         # Return the final plan for approval (handled by UI)
         yield {"step": "approval_required", "plan": plan, "trace_id": trace_id, "start_time": start, "insights": insights, "reasons": reasons, "status": "Waiting for Approval"}
 
-    def execute_plan(self, plan, trace_id, start_time, insights, reasons):
+    def execute_plan(self, plan: List[Dict], trace_id: str, start_time: str, insights: Dict, reasons: List[Dict]) -> Dict[str, Any]:
         """
         Executes the approved plan and records the incident.
         """

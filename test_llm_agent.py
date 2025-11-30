@@ -3,14 +3,21 @@ import os
 import json
 from unittest.mock import MagicMock, patch
 
-# Add src to path
-sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
+# Add project root to path
+sys.path.append(os.path.dirname(__file__))
 
+from src.config import Config
 from src.agents.llm_reasoning_agent import LLMReasoningAgent
 
 def test_refine_plan():
-    # Mock the GenerativeModel
-    with patch("src.agents.llm_reasoning_agent.GenerativeModel") as MockModel:
+    # Ensure DEMO_MODE is False so we hit the LLM logic (which we will mock)
+    Config.DEMO_MODE = False
+    Config.GCP_PROJECT_ID = "test-project" # Ensure it tries to init vertexai
+
+    # Mock vertexai.init to avoid actual auth
+    with patch("src.agents.llm_reasoning_agent.vertexai.init"), \
+         patch("src.agents.llm_reasoning_agent.GenerativeModel") as MockModel:
+        
         # Setup mock response
         mock_instance = MockModel.return_value
         mock_response = MagicMock()
