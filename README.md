@@ -285,15 +285,3 @@ For the competition, I describe deployment in the write-up and show how this cou
 - **Internal infrastructure teams** wanting a Gemini-powered incident analyst.
 
 ---
-
-## 10. 📽️ Demo Video (for competition)
-
-A short (<3 min) YouTube demo showcases:
-
-- Problem & motivation (Ops pain).
-- Architecture slide (diagram above).
-- Walk-through of one incident cycle in logs.
-- Explanation of how Gemini is used for reasoning & RAG.
-- Summary of impact and next steps.
-
-(Link to be added here once the video is uploaded.)
