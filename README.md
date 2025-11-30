@@ -67,7 +67,7 @@ All incidents are stored in **MemoryBank** + **KnowledgeBase** for RAG-like futu
 | Memory | ✔ | MemoryBank + KnowledgeBase |
 | Observability | ✔ | Centralized logging |
 
-Your project satisfies **7+ required features** (only 3 needed).
+Your project satisfies **7+ required features** (only 3 required).
 
 ---
 
@@ -76,21 +76,18 @@ Your project satisfies **7+ required features** (only 3 needed).
 ```mermaid
 flowchart TD
 
-    %% DATA SOURCES
     subgraph Data_Signals
         sales[Sales Data]
         support[Support Data]
         marketing[Marketing Data]
     end
 
-    %% MEMORY + KNOWLEDGE
     subgraph Memory_Services
         mem[MemoryBank]
         kb[KnowledgeBase]
         sessions[SessionService]
     end
 
-    %% TOOLS
     subgraph Tools
         slack[Slack Notifier]
         email[Email Sender]
@@ -99,7 +96,6 @@ flowchart TD
         openapi[Agent Tools API]
     end
 
-    %% AGENTS
     subgraph Agents
         dc[DataCollectorAgent]
         an[AnalyticsAgent]
@@ -110,7 +106,6 @@ flowchart TD
         sup[SupervisorAgent]
     end
 
-    %% DATA FLOW
     sales --> dc
     support --> dc
     marketing --> dc
@@ -121,7 +116,6 @@ flowchart TD
     dm --> llm
     llm --> act
 
-    %% SUPERVISOR
     sup --> dc
     sup --> an
     sup --> rc
@@ -129,113 +123,95 @@ flowchart TD
     sup --> llm
     sup --> act
 
-    %% MEMORY + SESSION
     sup --> mem
     sup --> kb
     sup --> sessions
     kb --> llm
 
-    %% ACTIONS
     act --> slack
     act --> email
     act --> task
     act --> pdf
     act --> openapi
-6. ⭐ Agent Descriptions
-DataCollectorAgent
+```
 
+---
+
+## 6. ⭐ Agent Descriptions
+
+### **DataCollectorAgent**  
 Loads signals from CSV via DataFetcher.
 
-AnalyticsAgent
-
+### **AnalyticsAgent**  
 Computes KPIs & identifies anomalies.
 
-RootCauseAgent
-
+### **RootCauseAgent**  
 Correlates anomalies to suggest root causes.
 
-DecisionMakerAgent
-
+### **DecisionMakerAgent**  
 Turns root causes into a remediation plan.
 
-LLMReasoningAgent (Gemini)
-
+### **LLMReasoningAgent (Gemini)**  
 Refines remediation plan & produces explanations.
 
-ActionExecutorAgent
+### **ActionExecutorAgent**  
+Executes actions using:
+- Slack  
+- Email  
+- Task creation  
+- PDF reports  
+- OpenAPI tools  
 
-Executes actions via tools:
+### **SupervisorAgent**  
+Orchestrates full workflow.
 
-Slack
-
-Email
-
-Task creation
-
-PDF reports
-
-OpenAPI tools
-
-SupervisorAgent
-
-Controls entire pipeline.
-
-SupervisorWithSession
-
+### **SupervisorWithSession**  
 Adds long-running execution + pause/resume.
 
-7. ⭐ Memory & Sessions
-MemoryBank
+---
 
+## 7. ⭐ Memory & Sessions
+
+### **MemoryBank**  
 Stores:
+- Incidents  
+- KPI baselines  
+- Root cause mappings  
+- Remediation actions  
 
-Incidents
-
-KPI baselines
-
-Root cause mappings
-
-Remediation actions
-
-KnowledgeBase
-
+### **KnowledgeBase**  
 Provides RAG-style retrieval of similar past incidents.
 
-SessionService
-
+### **SessionService**  
 Tracks:
+- execution state  
+- last trace  
+- active / paused / finished session  
 
-execution state
+---
 
-last trace
+## 8. ⭐ Tools System
 
-active / paused / finished sessions
+### **Custom Tools**
+- SlackNotifier  
+- EmailSender  
+- PDFReportGenerator  
+- TaskManager  
+- DataFetcher  
 
-8. ⭐ Tools System
-Custom Tools
-
-SlackNotifier
-
-EmailSender
-
-PDFReportGenerator
-
-TaskManager
-
-DataFetcher
-
-OpenAPI Tools (FastAPI)
-
-Exposed endpoints:
-
+### **OpenAPI Tools (FastAPI)**  
+Endpoints:
+```
 /openapi/slack
 /openapi/task
 /email
+```
 
+---
 
-These are consumed by ActionExecutorAgent.
+## 9. ⭐ Project Structure
 
-9. ⭐ Project Structure
+```
 AIOCC-Enterprise-Agent/
 │
 ├── data/
@@ -252,70 +228,77 @@ AIOCC-Enterprise-Agent/
 ├── Dockerfile
 ├── .env.example
 └── DEPLOYMENT_GUIDE.md
+```
 
-10. ⭐ Local Setup
-Install
+---
+
+## 10. ⭐ Local Setup
+
+### Install
+
+```bash
 git clone https://github.com/nikhilvadlaa/AIOCC-Enterprise-Agent.git
 cd AIOCC-Enterprise-Agent
 
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+```
 
-Environment
+### Environment
+
+```bash
 cp .env.example .env
-
+```
 
 Set:
 
+```
 DEMO_MODE=true
+```
 
-11. ⭐ Run an Incident Cycle
+---
+
+## 11. ⭐ Run an Incident Cycle
+
+```bash
 python run_cycle.py
+```
 
+---
 
-Logs will show:
+## 12. ⭐ Deployment (Docker / Cloud Run)
 
-Data ingestion
+### Build
 
-KPI insights
-
-Anomaly detection
-
-Root cause generation
-
-Plan creation
-
-Gemini refinement
-
-Actions
-
-Memory updates
-
-12. ⭐ Deployment (Docker / Cloud Run)
-Build
+```bash
 docker build -t aiocc-agent .
+```
 
-Run
+### Run
+
+```bash
 docker run --env-file .env aiocc-agent
+```
 
+Cloud instructions:
 
-Full cloud instructions are in:
-
+```
 DEPLOYMENT_GUIDE.md
+```
 
-13. ⭐ Use Cases
+---
 
-Surge detection in support, sales, marketing
+## 13. ⭐ Use Cases
 
-Anomaly-driven incident creation
+- Support / sales / marketing surge detection  
+- Anomaly-driven incident creation  
+- Autonomous OPs remediation  
+- SRE co-pilot  
+- Past incident RAG reasoning  
 
-Auto-remediation for operational tasks
+---
 
-Enterprise SRE co-pilot
-
-Knowledge-retaining incident reasoning
-
-14. ⭐ License
+## 14. ⭐ License
 
 MIT License.
