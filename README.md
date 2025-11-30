@@ -91,9 +91,4 @@ streamlit run app.py
 python run_cycle.py
 ```
 
-## 6. ☁️ Deployment (Google Cloud Run)
-The system is containerized and ready for serverless deployment.
-```bash
-gcloud builds submit --config cloudbuild.yaml .
-```
-See [DEPLOYMENT.md](DEPLOYMENT.md) for full details.
+
