@@ -85,4 +85,9 @@ This project demonstrates advanced agentic patterns:
 python run_cycle.py
 ```
 
+## 6. ☁️ Deployment (Reference)
+This agent is designed to be cloud-native. While it runs locally for demonstration, it includes full configuration for **Docker** and **Google Cloud Run**.
+
+See [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) for the implementation details.
+
 
