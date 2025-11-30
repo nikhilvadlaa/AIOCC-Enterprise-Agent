@@ -41,6 +41,8 @@ def main():
 
     # Services
     memory = MemoryBank(path="memory.json")
+    from src.services.knowledge_base import KnowledgeBase
+    kb = KnowledgeBase(path="data/chroma_db")
 
     # Agents
     dc = DataCollectorAgent(fetcher=fetcher)
@@ -52,7 +54,7 @@ def main():
     # LLM Agent (optional, requires Vertex AI)
     llm = None
     try:
-        llm = LLMReasoningAgent()
+        llm = LLMReasoningAgent(knowledge_base=kb)
     except Exception as e:
         print(f"Warning: Could not instantiate LLMReasoningAgent: {e}")
 

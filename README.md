@@ -18,7 +18,7 @@ In modern enterprise environments, **Mean Time To Resolution (MTTR)** is the bot
 1.  **🤖 Multi-Agent Architecture**: Specialized agents for Data Collection, Analysis, Root Cause, and Execution.
 2.  **🧠 RAG-Powered Memory**: Learns from past incidents. If a "High Latency" issue was fixed by a rollback last week, AIOCC remembers and suggests it immediately.
 3.  **🤝 Human-in-the-Loop Trust**: For high-risk actions (e.g., "Restart Database"), AIOCC sends an **Interactive Slack Request** or uses the **Streamlit Dashboard** for approval.
-4.  **📊 Interactive Dashboard**: A "Top 3 Winner" caliber Streamlit UI for real-time monitoring and control.
+
 
 ## 3. 🏗️ Architecture
 
@@ -81,12 +81,6 @@ This project demonstrates advanced agentic patterns:
 
 ### Running the Agents
 
-#### Option 1: Interactive Dashboard (Recommended) 🌟
-```bash
-streamlit run app.py
-```
-
-#### Option 2: CLI Mode
 ```bash
 python run_cycle.py
 ```
