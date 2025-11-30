@@ -1,126 +1,116 @@
-# 🤖 AIOCC — Enterprise AIOps Control Center
-
-> **Track:** Enterprise Agents  
-> **Tagline:** An autonomous, self-healing AIOps co-pilot that detects incidents, finds root causes, and executes remediation — powered by Gemini.
+# 🤖 AIOCC — Enterprise AIOps Control Center  
+### Autonomous Multi-Agent AIOps System powered by Gemini, Custom Tools, Memory, Sessions & OpenAPI
 
 ---
 
-## 1. 🚨 Problem
+## 1. ⭐ Overview
 
-Modern SRE / Ops teams are drowning in:
+**AIOCC (AI Operations Control Center)** is an end-to-end **Enterprise AIOps agent system** that autonomously:
 
-- **Alert fatigue** from multiple tools (monitoring, tickets, logs).
-- **Context switching** between dashboards to connect metrics, logs and incidents.
-- **Slow, manual remediation** for common patterns like memory leaks, CPU spikes, or bad deploys.
+- Ingests multi-department operational signals  
+- Detects anomalies  
+- Identifies root causes  
+- Generates + refines remediation plans using **Gemini**  
+- Executes actions (Slack, Email, Tasks, PDF Reports) via tools  
+- Saves incidents into long-term memory & knowledge base  
+- Maintains session state with pause/resume workflows  
+- Uses OpenAPI tools via a FastAPI Tools API  
 
-This inflates **MTTR (Mean Time To Resolution)** and burns out engineers. Most incidents follow **repeatable patterns**, but humans still do the investigation and fixes manually.
-
----
-
-## 2. 💡 Solution — Enterprise AIOps Control Center (AIOCC)
-
-**AIOCC** is a multi-agent AIOps system that:
-
-1. **Continuously ingests** synthetic observability data (sales, support, marketing as “signals” for demand / load).
-2. **Detects anomalies** and correlates signals into incidents.
-3. **Finds likely root causes** across the datasets.
-4. **Plans remediation** steps using a decision agent + Gemini.
-5. **Executes remediation actions** via tools (Slack, email, ticketing, PDF report).
-6. **Stores incidents in memory** to improve future recommendations (RAG on past incidents).
-
-Instead of “just alerts”, AIOCC behaves like a **self-healing runbook executor** that can:
-
-- Explain: *“What’s going on?”*  
-- Justify: *“Why did this happen?”*  
-- Act: *“What should we do now?”*
+It simulates a realistic enterprise incident lifecycle:  
+**Data → Insights → Anomalies → Root Cause → Plan → Gemini → Action → Memory.**
 
 ---
 
-## 3. 🌉 Core Concept & Value (for judges)
+## 2. ⭐ Problem
 
-- **Enterprise fit:** Mirrors a realistic AIOps workflow: signal ingestion → anomaly detection → root cause → action.
-- **Agents are central:** Each step is handled by a specialized agent orchestrated by a supervisor.
-- **Value to SREs:**
-  - Reduces **MTTR** with automated investigation + remediation.
-  - Reduces **alert fatigue** by aggregating signals into meaningful incidents.
-  - Creates a **knowledge base of incidents** that can be reused (RAG).
+Enterprise SRE & Ops teams face:
 
----
+- Alert fatigue  
+- Slow manual root cause analysis  
+- High MTTR  
+- Repetitive manual fixes  
+- Context switching between dashboards, logs, tickets  
 
-## 4. 🧠 Agent Architecture
+Most incidents follow **repeatable patterns**, but humans still perform the entire investigation manually.
 
-### 4.1 Multi-Agent System
-
-Core agents (in `src/agents/`):
-
-- **DataCollectorAgent** — pulls fresh CSV data via `DataFetcher` (simulating observability feeds).
-- **AnalyticsAgent** — computes KPIs & detects anomalies (e.g., spikes, drops).
-- **RootCauseAgent** — correlates anomalies across datasets to propose root causes.
-- **DecisionMakerAgent** — turns root causes into an initial remediation plan.
-- **LLMReasoningAgent** — uses **Gemini** for:
-  - Refining the remediation plan.
-  - Explaining root cause and impact in natural language.
-  - Using the **KnowledgeBase** for RAG on past incidents.
-- **ActionExecutorAgent** — executes actions through tools:
-  - Slack notifications
-  - Email
-  - Ticket/task creation
-  - PDF incident report
-- **SupervisorAgent** — orchestrates end-to-end flow and logs everything.
-- **SupervisorWithSession** — wraps Supervisor with **session management** (long-running / pause-resume).
-
-Support services (in `src/services/`):
-
-- `MemoryBank` — long-term memory of incidents and KPI baselines.
-- `SessionService` — file-backed sessions with pause / resume / last trace.
-- `KnowledgeBase` — simple vector-like store over incidents for RAG-style retrieval.
-
-Tools (in `src/tools/`):
-
-- `DataFetcher` — loads CSVs from `data/`.
-- `SlackNotifier` / `EmailSender` — send alerts.
-- `TaskManager` — creates tasks / tickets.
-- `PDFReportGenerator` — exports incident reports.
-- `openapi_tools.py` — wraps an **Agent Tools API** (FastAPI) as OpenAPI tools.
+AIOCC solves this with **autonomous incident analysis and remediation** using agent-based design.
 
 ---
 
-### 4.2 Architecture Diagram (Mermaid)
+## 3. ⭐ Solution
 
-You can paste this into a Mermaid-enabled viewer (or draw.io / Excalidraw):
+AIOCC implements a **multi-agent autonomous workflow**:
+
+1. **DataCollectorAgent** loads synthetic operational data.  
+2. **AnalyticsAgent** computes KPIs & detects anomalies.  
+3. **RootCauseAgent** correlates anomalies across departments.  
+4. **DecisionMakerAgent** drafts a remediation plan.  
+5. **LLMReasoningAgent (Gemini)** refines the plan + produces human-readable analysis.  
+6. **ActionExecutorAgent** executes actions through custom & OpenAPI tools.  
+7. **SupervisorAgent** orchestrates full workflow.  
+8. **SupervisorWithSession** adds long-running sessions & trace continuity.  
+
+All incidents are stored in **MemoryBank** + **KnowledgeBase** for RAG-like future context.
+
+---
+
+## 4. ⭐ Key Features (Competition Requirements)
+
+| Feature | Status | Notes |
+|--------|--------|-------|
+| Multi-agent system | ✔ | 8 specialized agents |
+| Custom tools | ✔ | Slack, Email, PDF, Tasks, DataFetcher |
+| OpenAPI tools | ✔ | FastAPI Tools API |
+| Sessions & state | ✔ | SessionService |
+| Long-running ops | ✔ | Pause/resume |
+| LLM agent (Gemini) | ✔ | Reasoning agent |
+| Memory | ✔ | MemoryBank + KnowledgeBase |
+| Observability | ✔ | Centralized logging |
+
+Your project satisfies **7+ required features** (only 3 needed).
+
+---
+
+## 5. ⭐ Architecture Diagram (Mermaid)
 
 ```mermaid
 flowchart TD
-    subgraph Data
+
+    %% DATA SOURCES
+    subgraph Data_Signals
         sales[Sales Data]
         support[Support Data]
         marketing[Marketing Data]
     end
 
-    subgraph Tools
-        slack[Slack Notifier]
-        email[Email Sender]
-        task[Task Manager]
-        pdf[PDF Report Generator]
-        openapi["Agent Tools API (FastAPI)"]
-    end
-
-    subgraph Memory
+    %% MEMORY + KNOWLEDGE
+    subgraph Memory_Services
         mem[MemoryBank]
         kb[KnowledgeBase]
         sessions[SessionService]
     end
 
+    %% TOOLS
+    subgraph Tools
+        slack[Slack Notifier]
+        email[Email Sender]
+        task[Task Manager]
+        pdf[PDF Generator]
+        openapi[Agent Tools API]
+    end
+
+    %% AGENTS
     subgraph Agents
         dc[DataCollectorAgent]
         an[AnalyticsAgent]
         rc[RootCauseAgent]
         dm[DecisionMakerAgent]
-        llm[LLMReasoningAgent (Gemini)]
+        llm[LLMReasoningAgent]
         act[ActionExecutorAgent]
         sup[SupervisorAgent]
     end
 
+    %% DATA FLOW
     sales --> dc
     support --> dc
     marketing --> dc
@@ -131,6 +121,7 @@ flowchart TD
     dm --> llm
     llm --> act
 
+    %% SUPERVISOR
     sup --> dc
     sup --> an
     sup --> rc
@@ -138,150 +129,193 @@ flowchart TD
     sup --> llm
     sup --> act
 
+    %% MEMORY + SESSION
+    sup --> mem
+    sup --> kb
+    sup --> sessions
+    kb --> llm
+
+    %% ACTIONS
     act --> slack
     act --> email
     act --> task
     act --> pdf
     act --> openapi
+6. ⭐ Agent Descriptions
+DataCollectorAgent
 
-    sup --> mem
-    sup --> kb
-    sup --> sessions
-    kb --> llm
-```
+Loads signals from CSV via DataFetcher.
 
-## 5. 🧩 Key Features (mapped to course concepts)
+AnalyticsAgent
 
-This project explicitly demonstrates multiple agent concepts from the course:
+Computes KPIs & identifies anomalies.
 
-### Multi-Agent System
+RootCauseAgent
 
-Sequential agents: DataCollector → Analytics → RootCause → Decision → LLM → Action.
+Correlates anomalies to suggest root causes.
 
-Specialized responsibilities per agent to keep logic clean.
+DecisionMakerAgent
 
-### Tools (Custom + OpenAPI)
+Turns root causes into a remediation plan.
 
-Custom tools: SlackNotifier, EmailSender, TaskManager, PDFReportGenerator, DataFetcher.
+LLMReasoningAgent (Gemini)
 
-OpenAPI tools: OpenAPISlack, OpenAPITask using `agent_tools_api/main.py` (FastAPI).
+Refines remediation plan & produces explanations.
 
-### Sessions & Memory
+ActionExecutorAgent
 
-SessionService manages long-running sessions, active/paused/finished, and last trace ID.
+Executes actions via tools:
 
-MemoryBank stores incidents, KPI baselines and allows querying past events.
+Slack
 
-KnowledgeBase supports RAG-style similarity search over incidents.
+Email
 
-### Long-Running Operations
+Task creation
 
-SupervisorWithSession allows stepwise execution, pause/resume and continuation across sessions.
+PDF reports
 
-### Observability
+OpenAPI tools
 
-Centralized logging via `src/utils/logger.py`.
+SupervisorAgent
 
-Each step logs trace IDs, status and outcomes, making debugging easier.
+Controls entire pipeline.
 
-### LLM-Powered Agent
+SupervisorWithSession
 
-LLMReasoningAgent uses Gemini (Vertex AI) for plan refinement and explanation generation.
+Adds long-running execution + pause/resume.
 
----
+7. ⭐ Memory & Sessions
+MemoryBank
 
-## 6. 🛠 Tech Stack
+Stores:
 
-- **Language:** Python 3
-- **Agents & Orchestration:** Custom classes under `src/agents`
-- **LLM:** Google Gemini via Vertex AI Python SDK
-- **API Tools:** FastAPI (`src/agent_tools_api`)
-- **Data:** CSVs under `data/` simulating enterprise signals
-- **Packaging / Env:** `.env`, `Config` class in `src/config.py`
+Incidents
 
----
+KPI baselines
 
-## 7. 🚀 Getting Started (Local Demo)
+Root cause mappings
 
-### 7.1 Prerequisites
+Remediation actions
 
-- Python 3.10+
-- (Optional) Google Cloud project + Vertex AI enabled if you want real Gemini calls.
+KnowledgeBase
 
-### 7.2 Setup
+Provides RAG-style retrieval of similar past incidents.
 
-```bash
+SessionService
+
+Tracks:
+
+execution state
+
+last trace
+
+active / paused / finished sessions
+
+8. ⭐ Tools System
+Custom Tools
+
+SlackNotifier
+
+EmailSender
+
+PDFReportGenerator
+
+TaskManager
+
+DataFetcher
+
+OpenAPI Tools (FastAPI)
+
+Exposed endpoints:
+
+/openapi/slack
+/openapi/task
+/email
+
+
+These are consumed by ActionExecutorAgent.
+
+9. ⭐ Project Structure
+AIOCC-Enterprise-Agent/
+│
+├── data/
+├── src/
+│   ├── agents/
+│   ├── tools/
+│   ├── services/
+│   ├── agent_tools_api/
+│   ├── utils/
+│   └── config.py
+│
+├── run_cycle.py
+├── requirements.txt
+├── Dockerfile
+├── .env.example
+└── DEPLOYMENT_GUIDE.md
+
+10. ⭐ Local Setup
+Install
 git clone https://github.com/nikhilvadlaa/AIOCC-Enterprise-Agent.git
 cd AIOCC-Enterprise-Agent
 
-# Create virtual env (recommended)
 python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
-
+source .venv/bin/activate
 pip install -r requirements.txt
-```
 
-Copy `.env.example` to `.env`:
-
-```bash
+Environment
 cp .env.example .env
-```
 
-Set values in `.env`:
 
-For demo mode only, you can set:
+Set:
 
-```ini
 DEMO_MODE=true
-```
 
-Leave Slack / email keys empty → actions are logged instead of sent.
-
-For full integration (optional):
-
-- `GCP_PROJECT_ID`, `GCP_LOCATION`
-- `SLACK_BOT_TOKEN`, `SLACK_CHANNEL_ID`
-- `SENDGRID_API_KEY` or SMTP settings
-
-### 7.3 Run a Single Incident Cycle
-
-```bash
+11. ⭐ Run an Incident Cycle
 python run_cycle.py
-```
 
-You should see logs like:
 
-- Data loaded
-- Insights computed
-- Root cause identified
-- Plan created and refined
-- Actions (Slack/email/task/report) simulated or executed
-- Incident stored in `memory.json`
+Logs will show:
 
----
+Data ingestion
 
-## 8. ☁️ Deployment Overview
+KPI insights
 
-This project is container-ready and includes Cloud Run instructions.
+Anomaly detection
 
-- `Dockerfile` — builds the agent container.
-- `src/agent_tools_api/Dockerfile` — builds the tools API container.
-- `DEPLOYMENT_GUIDE.md` — detailed steps for:
-  - Local Docker
-  - Google Cloud Run Service / Jobs
-  - Environment variables and secret handling
+Root cause generation
 
-For the competition, I describe deployment in the write-up and show how this could run as:
+Plan creation
 
-- A scheduled Cloud Run job (periodic incident scan).
-- A Cloud Run service with an HTTP endpoint to trigger a new cycle.
+Gemini refinement
 
----
+Actions
 
-## 9. 📊 Example Use Cases
+Memory updates
 
-- **E-commerce platform** wanting automatic detection of “marketing spike → traffic spike → infrastructure stress”.
-- **SaaS product** needing root cause suggestions for support ticket spikes.
-- **Internal infrastructure teams** wanting a Gemini-powered incident analyst.
+12. ⭐ Deployment (Docker / Cloud Run)
+Build
+docker build -t aiocc-agent .
 
----
+Run
+docker run --env-file .env aiocc-agent
+
+
+Full cloud instructions are in:
+
+DEPLOYMENT_GUIDE.md
+
+13. ⭐ Use Cases
+
+Surge detection in support, sales, marketing
+
+Anomaly-driven incident creation
+
+Auto-remediation for operational tasks
+
+Enterprise SRE co-pilot
+
+Knowledge-retaining incident reasoning
+
+14. ⭐ License
+
+MIT License.
